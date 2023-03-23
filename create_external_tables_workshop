@@ -1,0 +1,82 @@
+-- Specify database
+use database dbt_workshop;
+
+-- Create schema
+CREATE OR REPLACE SCHEMA car_rental;
+
+-- Create file format
+CREATE OR REPLACE FILE FORMAT car_rental.csv_format_test
+TYPE = CSV
+SKIP_HEADER=1;
+
+-- Create stage
+CREATE OR REPLACE STAGE car_rental.dbt_workshop 
+URL = 'azure://dbtworkshop.blob.core.windows.net/dbtworkshopcontainer/';
+
+-- Create cars external table
+CREATE OR REPLACE external TABLE car_rental.cars (
+  carid int as (value:c1::int),
+  tagnumber varchar as (value:c2::varchar),
+  rentalcategoriesid int as (value:c3::int),
+  make varchar as (value:c4::varchar),
+  model varchar as (value:c5::varchar),
+  caryear int as (value:c6::int),
+  purchaseprice int as (value:c7::int),
+  mp3player byteint as (value:c8::byteint),
+  dvdplayer byteint as (value:c9::byteint),
+  airconditioner byteint as (value:c10::byteint),
+  abs byteint as (value:c11::byteint),
+  asr byteint as (value:c12::byteint),
+  navigation byteint as (value:c13::byteint),
+  available byteint as (value:c14::byteint),
+  color varchar as (value:c15::varchar)
+)
+  LOCATION = @car_rental.dbt_workshop
+  AUTO_REFRESH = false
+  PATTERN = 'cars.csv'
+  FILE_FORMAT = car_rental.csv_format_test;
+  
+-- Create rentalorders external table
+CREATE OR REPLACE external TABLE car_rental.rentalorders (
+  rentalorderid int as (value:c1::int),
+  customerid int as (value:c2::int),
+  carid int as (value:c3::int),
+  tanklevel varchar as (value:c4::varchar),
+  mileagestart int as (value:c5::int),
+  mileageend int as (value:c6::int),
+  rentstartdate datetime as (value:c7::datetime),
+  rentenddate datetime as (value:c8::datetime),
+  orderstatus varchar as (value:c9::varchar)
+)
+  LOCATION = @car_rental.dbt_workshop
+  AUTO_REFRESH = false
+  PATTERN = 'rentalOrders.csv'
+  FILE_FORMAT = car_rental.csv_format_test;
+  
+-- Create customers external table
+CREATE OR REPLACE external TABLE car_rental.customers (
+  customerid int as (value:c1::int),
+  drvlicnumber varchar as (value:c2::varchar),
+  rentalcategoriesid int as (value:c3::int),
+  fullname varchar as (value:c4::varchar),
+  address varchar as (value:c5::varchar),
+  country varchar as (value:c6::varchar),
+  city varchar as (value:c7::varchar),
+  state varchar as (value:c8::varchar),
+  zipcode int as (value:c9::int)
+)
+  LOCATION = @car_rental.dbt_workshop
+  AUTO_REFRESH = false
+  PATTERN = 'customers.csv'
+  FILE_FORMAT = car_rental.csv_format_test;
+
+-- Create rentalcategories external table
+CREATE OR REPLACE external TABLE car_rental.rentalcategories (
+  rentalcategoriesid int as (value:c1::int),
+  category varchar as (value:c2::varchar),
+  monthlyrentprice int as (value:c3::int)
+)
+  LOCATION = @car_rental.dbt_workshop
+  AUTO_REFRESH = false
+  PATTERN = 'rentalCategories.csv'
+  FILE_FORMAT = car_rental.csv_format_test;
