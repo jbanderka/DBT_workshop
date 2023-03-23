@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: dtb_workshop
+    database: car_rental
+    tables:
+      - name: cars
+      - name: customers
+      - name: rentalcategories
+      - name: rentalorders
